@@ -2,11 +2,6 @@ image: lorisleiva/laravel-docker:latest
 
 composer:
   stage: build  
-  rules:
-    - if: '$CI_PIPELINE_SOURCE == "merge_request_event" || $CI_PIPELINE_SOURCE == "push"'
-      when: on_success
-    - if: '$CI_MERGE_REQUEST_LABELS =~ /^skip ci/'
-
   script:
       - composer install --prefer-dist --no-ansi --no-interaction --no-progress --no-scripts
       - cp .env.example .env
@@ -25,7 +20,6 @@ composer:
 
 npm:
   stage: build
-  needs: ['composer']
   
   # Cache the `node_modules` folder
   # using the `npm` suffix on the key.
