@@ -3,9 +3,8 @@ image: lorisleiva/laravel-docker:latest
 composer:
   stage: build  
   rules:
-    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event" || $CI_PIPELINE_SOURCE == "push"'
       when: on_success
-    - if: '$CI_PIPELINE_SOURCE == "schedule"'
     - if: '$CI_MERGE_REQUEST_LABELS =~ /^skip ci/'
 
   script:
