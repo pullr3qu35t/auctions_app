@@ -46,11 +46,13 @@ phpunit:
   stage: test  
   dependencies:
     - composer
+  needs: ['composer']
   script:
     - phpunit --coverage-text --colors=never
 
 codestyle:
   stage: test
+  needs: ['composer']
   dependencies: []
   script:
     - phpcs --standard=PSR2 --extensions=php --ignore=app/Support/helpers.php app
