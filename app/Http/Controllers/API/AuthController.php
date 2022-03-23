@@ -2,54 +2,76 @@
 
 namespace App\Http\Controllers\API;
 
+use App\Http\Controllers\Controller;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use App\Http\Controllers\API\BaseController as BaseController;
-use App\Models\User;
-use Validator;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Validator;
 
-class AuthController extends BaseController
+class AuthController extends Controller
 {
     /**
      * @param Request $request
-     * @return mixed
-     */
-    public function login(Request $request)
-    {
-        if (Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
-            $auth = Auth::user();
-            $success['token'] = $auth->createToken('LaravelSanctumAuth')->plainTextToken;
-            $success['name'] = $auth->name;
-
-            return $this->handleResponse($success, 'User logged-in!');
-        } else {
-            return $this->handleError('Unauthorised.', ['error' => 'Unauthorised']);
-        }
-    }
-
-    /**
-     * @param Request $request
-     * @return mixed
+     * @return \Illuminate\Http\JsonResponse
      */
     public function register(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'name'             => 'required',
-            'email'            => 'required|email',
-            'password'         => 'required',
-            'confirm_password' => 'required|same:password',
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users',
+            'password' => 'required|string|min:8'
         ]);
 
         if ($validator->fails()) {
-            return $this->handleError($validator->errors());
+            return response()->json($validator->errors());
         }
 
-        $input = $request->all();
-        $input['password'] = bcrypt($input['password']);
-        $user = User::create($input);
-        $success['token'] = $user->createToken('LaravelSanctumAuth')->plainTextToken;
-        $success['name'] = $user->name;
+        $user = User::create([
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => Hash::make($request->password),
+        ]);
 
-        return $this->handleResponse($success, 'User successfully registered!');
+        $token = $user->createToken('auth_token')->plainTextToken;
+
+        return response()
+            ->json(['data' => $user,'access_token' => $token, 'token_type' => 'Bearer', ]);
+    }
+
+    /**
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function login(Request $request)
+    {
+        if (!Auth::attempt($request->only('email', 'password'))) {
+            return response()
+                ->json(['message' => 'Unauthorized'], 401);
+        }
+
+        /** @var User $user */
+        $user = User::query()->where('email', $request['email'])->firstOrFail();
+
+        $token = $user->createToken('auth_token')->plainTextToken;
+
+        return response()
+            ->json([
+                'message'      => 'Hi '.$user->name.', welcome to home',
+                'access_token' => $token,
+                'token_type'   => 'Bearer',
+            ]);
+    }
+
+    /**
+     * @return string[]
+     */
+    public function logout(): array
+    {
+        auth()->user()->tokens()->delete();
+
+        return [
+            'message' => 'You have successfully logged out and the token was successfully deleted',
+        ];
     }
 }
