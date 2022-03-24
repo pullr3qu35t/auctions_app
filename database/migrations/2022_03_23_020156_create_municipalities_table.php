@@ -21,7 +21,7 @@ class CreateMunicipalitiesTable extends Migration
             $table->softDeletes();
 
             //Foreign Key
-            $table->foreign('province_id')->references('id')->on('province');
+            $table->foreign('province_id')->references('id')->on('provinces');
         });
     }
 
