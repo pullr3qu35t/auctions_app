@@ -1,0 +1,58 @@
+image: lorisleiva/laravel-docker:latest
+
+composer:
+  stage: build  
+  script:
+      - composer install --prefer-dist --no-ansi --no-interaction --no-progress --no-scripts
+      - cp .env.example .env
+      - php artisan key:generate
+
+  artifacts:
+    expire_in: 1 month    
+    paths:
+      - vendor/
+      - .env
+
+  cache:
+    key: ${CI_COMMIT_REF_SLUG}-composer    
+    paths:
+      - vendor/
+
+npm:
+  stage: build
+  
+  # Cache the `node_modules` folder
+  # using the `npm` suffix on the key.
+  cache:
+    key: ${CI_COMMIT_REF_SLUG}-npm
+    paths:
+      - node_modules/
+
+  # Install and compile.
+  script:
+      - npm install
+      - npm run production
+
+  # Provide the other jobs of the pipeline with
+  # the node dependencies and the compiled assets.
+  artifacts:
+    expire_in: 1 month
+    paths:
+      - node_modules/
+      - public/css/
+      - public/js/
+
+phpunit:
+  stage: test  
+  dependencies:
+    - composer
+  needs: ['composer']
+  script:
+    - phpunit --coverage-text --colors=never
+
+codestyle:
+  stage: test
+  needs: ['composer']
+  dependencies: []
+  script:
+    - phpcs --standard=PSR2 --extensions=php --ignore=app/Support/helpers.php app
