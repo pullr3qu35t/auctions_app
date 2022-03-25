@@ -1,28 +1,38 @@
-image: lorisleiva/laravel-docker:latest
+image: registry.gitlab.com/jnunez28/subastas-web:0.6
+
+services:
+  - mysql:5.7
+
+variables:
+  MYSQL_DATABASE: homestead
+  MYSQL_ROOT_PASSWORD: secret
+  DB_HOST: mysql
+  DB_USERNAME: root
+
+stages:
+  - build
+  - test
 
 composer:
-  stage: build  
+  stage: build
   script:
-      - composer install --prefer-dist --no-ansi --no-interaction --no-progress --no-scripts
-      - cp .env.example .env
-      - php artisan key:generate
+    - composer install --prefer-dist --no-ansi --no-interaction --no-progress --no-scripts
+    - cp .env.example .env
+    - php artisan key:generate
+    - php artisan migrate
 
   artifacts:
-    expire_in: 1 month    
+    expire_in: 1 month
     paths:
       - vendor/
       - .env
 
   cache:
-    key: ${CI_COMMIT_REF_SLUG}-composer    
+    key: ${CI_COMMIT_REF_SLUG}-composer
     paths:
       - vendor/
-
 npm:
   stage: build
-  
-  # Cache the `node_modules` folder
-  # using the `npm` suffix on the key.
   cache:
     key: ${CI_COMMIT_REF_SLUG}-npm
     paths:
@@ -30,8 +40,8 @@ npm:
 
   # Install and compile.
   script:
-      - npm install
-      - npm run production
+    - npm install
+    - npm run production
 
   # Provide the other jobs of the pipeline with
   # the node dependencies and the compiled assets.
@@ -42,17 +52,16 @@ npm:
       - public/css/
       - public/js/
 
-phpunit:
-  stage: test  
-  dependencies:
-    - composer
-  needs: ['composer']
-  script:
-    - phpunit --coverage-text --colors=never
-
 codestyle:
   stage: test
   needs: ['composer']
-  dependencies: []
+  dependencies: ['composer']
   script:
     - phpcs --standard=PSR2 --extensions=php --ignore=app/Support/helpers.php app
+
+unit_test:
+  stage: test
+  dependencies: ['composer']
+  needs: ['composer']
+  script:
+    - vendor/bin/phpunit
