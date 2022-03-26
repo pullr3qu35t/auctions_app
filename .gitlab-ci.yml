@@ -71,7 +71,6 @@ deployment:
   stage: deployment
   needs: ['composer']
   script:
-    - apt-get install ftp -y
     - sh .gitlab/bashes/ftp.sh
     - rm .env
     - rm -r .git/
