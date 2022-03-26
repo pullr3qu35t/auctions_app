@@ -23,6 +23,6 @@ class CategorySale extends Model
 
     public function subCategories()
     {
-        return $this->hasMany(SubCategory::class, 'sub_categories_id');
+        return $this->hasMany(SubCategory::class, 'category_id');
     }
 }
