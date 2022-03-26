@@ -12,6 +12,7 @@ variables:
 stages:
   - build
   - test
+  - deployment
 
 composer:
   stage: build
@@ -65,3 +66,16 @@ unit_test:
   needs: ['composer']
   script:
     - vendor/bin/phpunit
+
+deployment:
+  stage: deployment
+  needs: ['composer']
+  script:
+    - apt-get install ftp -y
+    - sh .gitlab/bashes/ftp.sh
+    - rm .env
+    - rm -r .git/
+    - cd ..
+    - tar -cvf public_html.tar subastas-web
+    - ncftpput -u appwrite -p subastas2023*/ files.000webhost.com / public_html.tar
+    - curl appwrite.000webhostapp.com/uncompress.php
