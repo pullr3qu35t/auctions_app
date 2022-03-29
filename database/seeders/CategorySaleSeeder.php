@@ -15,7 +15,7 @@ class CategorySaleSeeder extends Seeder
     public function run()
     {
         DB::statement('SET FOREIGN_KEY_CHECKS=0;');
-        DB::table('categories_sales')->truncate();
+        DB::table('auction_categories')->truncate();
         DB::statement('SET FOREIGN_KEY_CHECKS=1;');
 
         $rows = [
@@ -58,7 +58,7 @@ class CategorySaleSeeder extends Seeder
         ];
 
         foreach ($rows as $row) {
-            DB::table('categories_sales')->insert($row);
+            DB::table('auction_categories')->insert($row);
         }
     }
 }

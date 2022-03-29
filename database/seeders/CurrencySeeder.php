@@ -31,6 +31,12 @@ class CurrencySeeder extends Seeder
                 'description'  => 'Moneda Nacional',
                 'created_at'   => now(),
             ],
+            [
+                'sign'         => '$',
+                'abbreviation' => 'MLC',
+                'description'  => 'Moneda Libremente Convertible',
+                'created_at'   => now(),
+            ],
         ];
 
         foreach ($rows as $row) {
