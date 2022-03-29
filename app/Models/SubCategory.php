@@ -10,11 +10,6 @@ class SubCategory extends Model
     use SoftDeletes;
 
     /**
-     * @var string $table
-     */
-    protected $table = 'sub_categories';
-
-    /**
      * @var array $fillable
      */
     protected $fillable = [

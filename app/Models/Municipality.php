@@ -10,11 +10,6 @@ class Municipality extends Model
     use SoftDeletes;
 
     /**
-     * @var string $table
-     */
-    protected $table = 'municipalities';
-
-    /**
      * @var array $fillable
      */
     protected $fillable = [
