@@ -10,11 +10,6 @@ class Province extends Model
     use SoftDeletes;
 
     /**
-     * @var string $table
-     */
-    protected $table = 'provinces';
-
-    /**
      * @var array $fillable
      */
     protected $fillable = [

@@ -21,7 +21,7 @@ class CreateSubCategoriesTable extends Migration
             $table->softDeletes();
 
             //Foreign Key
-            $table->foreign('category_id')->references('id')->on('categories_sales');
+            $table->foreign('category_id')->references('id')->on('auction_categories');
         });
     }
 

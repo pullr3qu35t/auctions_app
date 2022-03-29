@@ -25,9 +25,7 @@ class CreateMunicipalitiesTable extends Migration
         });
     }
 
-    /**
-     * Reverse the migrations.
-     *
+    /** Reverse migrations
      * @return void
      */
     public function down()
