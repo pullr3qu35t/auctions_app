@@ -10,11 +10,6 @@ class SubCategory extends Model
     use SoftDeletes;
 
     /**
-     * @var string $table
-     */
-    protected $table = 'sub_categories';
-
-    /**
      * @var array $fillable
      */
     protected $fillable = [
@@ -24,6 +19,6 @@ class SubCategory extends Model
 
     public function category()
     {
-        return $this->belongsTo(CategorySale::class);
+        return $this->belongsTo(AuctionCategory::class);
     }
 }

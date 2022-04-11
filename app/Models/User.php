@@ -6,8 +6,9 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use \TCG\Voyager\Models\User as UserModel;
 
-class User extends Authenticatable
+class User extends UserModel
 {
     use HasApiTokens, HasFactory, Notifiable;
 
